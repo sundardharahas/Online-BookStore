@@ -1,0 +1,346 @@
+<app-user-navbar></app-user-navbar>
+
+<!-- Header Section -->
+<div class="header-section">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-8 header-content">
+        <h1 class="header-title">Checkout</h1>
+        <p class="header-subtitle">Complete your purchase in just a few steps</p>
+      </div>
+      <div class="col-lg-4 text-end">
+        <i class="fas fa-shopping-bag fa-6x opacity-25"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="checkout-container">
+  <!-- Loading Spinner -->
+  <div class="text-center py-5" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3">Loading checkout details...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div class="alert alert-danger alert-dismissible fade show" *ngIf="errorMessage && !isLoading" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    {{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+  </div>
+
+  <!-- Success Message -->
+  <div class="alert alert-success alert-dismissible fade show" *ngIf="successMessage && !isLoading" role="alert">
+    <i class="fas fa-check-circle me-2"></i>
+    {{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+  </div>
+
+  <!-- Empty Cart State -->
+  <div class="empty-state" *ngIf="!isLoading && cartItems.length === 0">
+    <i class="fas fa-shopping-cart"></i>
+    <h3>Your cart is empty</h3>
+    <p class="text-muted mb-4">Add some books to your cart before checkout.</p>
+    <button class="btn btn-primary-custom" routerLink="/dashboard">
+      <i class="fas fa-book me-2"></i>Browse Books
+    </button>
+  </div>
+
+  <!-- Checkout Form -->
+  <div class="row" *ngIf="!isLoading && cartItems.length > 0">
+    <!-- Checkout Form -->
+    <div class="col-lg-8">
+      <div class="checkout-steps">
+        <div class="step-header">
+          <div class="step-number">3</div>
+          <h5 class="step-title">Review Your Order</h5>
+        </div>
+        
+        <form [formGroup]="shippingForm" (ngSubmit)="placeOrder()">
+          <!-- Shipping Information -->
+          <div class="mb-4">
+            <h6 class="fw-semibold mb-3">
+              <i class="fas fa-map-marker-alt me-2 text-primary"></i>Shipping Address
+            </h6>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Full Name *</label>
+                <input type="text" class="form-control" formControlName="fullName" 
+                       [class.is-invalid]="shippingForm.get('fullName')?.invalid && shippingForm.get('fullName')?.touched">
+                <div class="invalid-feedback" *ngIf="shippingForm.get('fullName')?.invalid && shippingForm.get('fullName')?.touched">
+                  Full name is required
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" formControlName="email" readonly>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Address *</label>
+              <textarea class="form-control" formControlName="address" rows="3"
+                        [class.is-invalid]="shippingForm.get('address')?.invalid && shippingForm.get('address')?.touched"></textarea>
+              <div class="invalid-feedback" *ngIf="shippingForm.get('address')?.invalid && shippingForm.get('address')?.touched">
+                Address is required
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label">City *</label>
+                <input type="text" class="form-control" formControlName="city"
+                       [class.is-invalid]="shippingForm.get('city')?.invalid && shippingForm.get('city')?.touched">
+                <div class="invalid-feedback" *ngIf="shippingForm.get('city')?.invalid && shippingForm.get('city')?.touched">
+                  City is required
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">State *</label>
+                <input type="text" class="form-control" formControlName="state"
+                       [class.is-invalid]="shippingForm.get('state')?.invalid && shippingForm.get('state')?.touched">
+                <div class="invalid-feedback" *ngIf="shippingForm.get('state')?.invalid && shippingForm.get('state')?.touched">
+                  State is required
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">ZIP Code *</label>
+                <input type="text" class="form-control" formControlName="zipCode" maxlength="5"
+                       (input)="formatZipCode($event)"
+                       [class.is-invalid]="shippingForm.get('zipCode')?.invalid && shippingForm.get('zipCode')?.touched">
+                <div class="invalid-feedback" *ngIf="shippingForm.get('zipCode')?.invalid && shippingForm.get('zipCode')?.touched">
+                  Enter a valid 5-digit ZIP code
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">Phone Number *</label>
+              <input type="tel" class="form-control" formControlName="phone" maxlength="12"
+                     (input)="formatPhone($event)"
+                     [class.is-invalid]="shippingForm.get('phone')?.invalid && shippingForm.get('phone')?.touched">
+              <div class="invalid-feedback" *ngIf="shippingForm.get('phone')?.invalid && shippingForm.get('phone')?.touched">
+                Enter a valid 10-digit phone number
+              </div>
+            </div>
+          </div>
+          
+          <!-- Payment Method Selection -->
+          <div class="mb-4">
+            <h6 class="fw-semibold mb-3">
+              <i class="fas fa-credit-card me-2 text-primary"></i>Payment Method
+            </h6>
+            
+            <!-- Payment Options -->
+            <div class="card p-4">
+              <!-- Cash on Delivery -->
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="radio" name="paymentMethod" 
+                       id="cod" value="cod" [checked]="selectedPaymentMethod === 'cod'"
+                       (change)="selectPaymentMethod('cod')">
+                <label class="form-check-label fw-medium" for="cod">
+                  <i class="fas fa-money-bill-wave me-2 text-success"></i>Cash on Delivery
+                </label>
+              </div>
+
+              <!-- UPI -->
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="radio" name="paymentMethod" 
+                       id="upi" value="upi" [checked]="selectedPaymentMethod === 'upi'"
+                       (change)="selectPaymentMethod('upi')">
+                <label class="form-check-label fw-medium" for="upi">
+                  <i class="fas fa-mobile-alt me-2 text-primary"></i>UPI
+                </label>
+              </div>
+
+              <!-- Credit/Debit Card -->
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="radio" name="paymentMethod" 
+                       id="card" value="card" [checked]="selectedPaymentMethod === 'card'"
+                       (change)="selectPaymentMethod('card')">
+                <label class="form-check-label fw-medium" for="card">
+                  <i class="fas fa-credit-card me-2 text-info"></i>Credit / Debit Card
+                </label>
+              </div>
+
+              <!-- UPI FIELD -->
+              <div id="upiField" class="payment-field" [class.show]="selectedPaymentMethod === 'upi'">
+                <label class="form-label">Enter UPI ID</label>
+                <input type="text" class="form-control" 
+                       placeholder="example@upi" name="upiId">
+                <small class="text-muted">Enter your UPI ID (e.g., username@bankname)</small>
+              </div>
+
+              <!-- CARD FIELDS -->
+              <div id="cardFields" class="payment-field" [class.show]="selectedPaymentMethod === 'card'">
+                <div class="mb-2">
+                  <label class="form-label">Card Number</label>
+                  <input type="text" class="form-control" 
+                         placeholder="1234 5678 9012 3456" name="cardNumber" maxlength="19"
+                         (input)="formatCardNumber($event)">
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <label class="form-label">Valid Through</label>
+                    <input type="text" class="form-control" 
+                           placeholder="MM/YY" name="expiry" maxlength="5"
+                           (input)="formatExpiry($event)">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label">CVV</label>
+                    <input type="password" class="form-control" 
+                           placeholder="123" name="cvv" maxlength="4">
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <div class="col-md-6">
+                    <label class="form-label">Name on Card</label>
+                    <input type="text" class="form-control" 
+                           placeholder="John Doe" name="cardName">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Order Items -->
+          <div class="mb-4">
+            <h6 class="fw-semibold mb-3">
+              <i class="fas fa-box me-2 text-primary"></i>Order Items
+            </h6>
+            <div class="card">
+              <div class="card-body">
+                <div *ngFor="let item of cartItems" class="order-item">
+                  <div>
+                    <div class="item-title">{{ item.title }}</div>
+                    <div class="item-details">
+                      By {{ item.author }} • Qty: {{ item.quantity }}
+                    </div>
+                  </div>
+                  <div class="item-price">{{ formatCurrency(item.itemTotal) }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="custom-alert">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-info-circle"></i>
+              <div>
+                <strong>Important:</strong> Please review your order before placing it. 
+                You'll receive a confirmation email once your order is processed.
+              </div>
+            </div>
+          </div>
+          
+          <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-primary-custom" [disabled]="isPlacingOrder">
+              <i class="fas" [ngClass]="isPlacingOrder ? 'fa-spinner fa-spin' : 'fa-lock'"></i>
+              {{ isPlacingOrder ? 'Processing Order...' : 'Place Order' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Order Summary -->
+    <div class="col-lg-4">
+      <div class="order-summary-card">
+        <h5 class="summary-title">Order Summary</h5>
+        
+        <!-- Order Items -->
+        <div class="mb-4">
+          <h6 class="fw-semibold mb-3">Items ({{ cartItems.length }})</h6>
+          <div *ngFor="let item of cartItems" class="d-flex justify-content-between mb-2">
+            <span class="text-muted">{{ item.title }} × {{ item.quantity }}</span>
+            <span class="fw-medium">{{ formatCurrency(item.itemTotal) }}</span>
+          </div>
+        </div>
+        
+        <hr class="my-3">
+        
+        <!-- Price Breakdown -->
+        <div class="mb-3">
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>{{ formatCurrency(orderSummary.subtotal) }}</span>
+          </div>
+          <div class="summary-row">
+            <span>Shipping</span>
+            <span [class.text-success]="orderSummary.hasFreeShipping" [class.fw-bold]="orderSummary.hasFreeShipping">
+              {{ orderSummary.hasFreeShipping ? 'FREE' : formatCurrency(orderSummary.shipping) }}
+            </span>
+          </div>
+          <div class="summary-row">
+            <span>Tax (10%)</span>
+            <span>{{ formatCurrency(orderSummary.tax) }}</span>
+          </div>
+        </div>
+        
+        <hr class="my-3">
+        
+        <!-- Total -->
+        <div class="summary-row total">
+          <span>Total Amount</span>
+          <span class="text-primary">{{ formatCurrency(orderSummary.total) }}</span>
+        </div>
+        
+        <!-- Shipping Info -->
+        <div class="mt-4">
+          <div class="d-flex align-items-start mb-3">
+            <i class="fas fa-shipping-fast text-primary mt-1 me-2"></i>
+            <div>
+              <small class="fw-medium">Shipping Information</small>
+              <p *ngIf="orderSummary.hasFreeShipping" class="text-success mb-0">
+                <strong>Free Shipping</strong> applied to your order!
+              </p>
+              <p *ngIf="!orderSummary.hasFreeShipping" class="text-muted mb-0">
+                Add {{ formatCurrency(getAmountForFreeShipping()) }} more for free shipping
+              </p>
+            </div>
+          </div>
+          
+          <div class="d-flex align-items-start mb-3">
+            <i class="fas fa-shield-alt text-primary mt-1 me-2"></i>
+            <div>
+              <small class="fw-medium">Secure Payment</small>
+              <p class="text-muted mb-0">Your payment information is protected</p>
+            </div>
+          </div>
+          
+          <div class="d-flex align-items-start">
+            <i class="fas fa-undo text-primary mt-1 me-2"></i>
+            <div>
+              <small class="fw-medium">Return Policy</small>
+              <p class="text-muted mb-0">30-day hassle-free returns</p>
+            </div>
+          </div>
+        </div>
+        
+        <button class="btn btn-outline-secondary w-100 mt-3" (click)="goBackToCart()">
+          <i class="fas fa-arrow-left me-2"></i> Back to Cart
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="row mb-4">
+      <div class="col-md-12 text-center">
+        <h4 class="mb-3">Smart Bookstore</h4>
+        <p class="mb-0">Your trusted online bookstore for all reading needs</p>
+      </div>
+    </div>
+    <hr class="bg-light mb-4">
+    <p class="text-center mb-0">
+      &copy; 2024 Smart Bookstore. All rights reserved.
+    </p>
+  </div>
+</footer>

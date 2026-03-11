@@ -1,0 +1,35 @@
+<!-- Chatbot Button -->
+<div id="chatbot-btn" (click)="toggleChat()">
+  <i class="fas fa-comments"></i>
+</div>
+
+<!-- Chatbot Window -->
+<div id="chatbot-box" [style.display]="isOpen ? 'flex' : 'none'">
+  <div class="chat-header">
+    SmartBot 🤖
+    <span (click)="toggleChat()">✖</span>
+  </div>
+
+  <div id="chat-body">
+    <div *ngFor="let msg of messages" 
+         [style.textAlign]="msg.isUser ? 'right' : 'left'"
+         [style.color]="msg.isUser ? '#1E3A8A' : 'inherit'">
+      <b>{{ msg.isUser ? 'You:' : 'Bot:' }}</b> {{ msg.text }}
+    </div>
+    <div *ngIf="isLoading" class="typing-indicator">
+      <i>Bot is typing...</i>
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <input 
+      type="text" 
+      id="userMsg"
+      name="userMsg"
+      autocomplete="off"
+      [(ngModel)]="userMessage" 
+      (keyup.enter)="sendMessage()"
+      placeholder="Type your message...">
+    <button (click)="sendMessage()" [disabled]="isLoading">Send</button>
+  </div>
+</div>

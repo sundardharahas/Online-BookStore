@@ -1,0 +1,194 @@
+<div class="register-container">
+  <div class="register-left">
+    <div class="logo">
+      <i class="fas fa-book-open"></i> SmartBookstore
+    </div>
+    
+    <h1>Begin Your Reading Journey</h1>
+    <p>Join our AI-powered bookstore to discover personalized recommendations, chat with our book assistant, and access thousands of titles.</p>
+    
+    <div class="benefits">
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <i class="fas fa-robot"></i>
+        </div>
+        <div class="benefit-content">
+          <h4>Personalized AI Recommendations</h4>
+          <p>Get book suggestions tailored to your unique reading preferences and history.</p>
+        </div>
+      </div>
+      
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <i class="fas fa-comments"></i>
+        </div>
+        <div class="benefit-content">
+          <h4>24/7 Book Assistant</h4>
+          <p>Chat with our AI assistant for book recommendations and reading guidance.</p>
+        </div>
+      </div>
+      
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <i class="fas fa-chart-bar"></i>
+        </div>
+        <div class="benefit-content">
+          <h4>Reading Analytics Dashboard</h4>
+          <p>Track your reading progress, set goals, and get personalized insights.</p>
+        </div>
+      </div>
+      
+      <div class="benefit-item">
+        <div class="benefit-icon">
+          <i class="fas fa-bookmark"></i>
+        </div>
+        <div class="benefit-content">
+          <h4>Unlimited Book Collections</h4>
+          <p>Create and organize reading lists across all your favorite genres.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Chatbot Visualization -->
+    <div class="chatbot-visualization">
+      <div class="chatbot-message">
+        Welcome! I'll help you discover amazing books on your new journey! 📚
+      </div>
+      <div class="chatbot-robot">
+        <i class="fas fa-robot"></i>
+      </div>
+    </div>
+    
+    <div class="book-shelf">
+      <div class="book book-1"><div class="book-title">AI</div></div>
+      <div class="book book-2"><div class="book-title">Fiction</div></div>
+      <div class="book book-3"><div class="book-title">Tech</div></div>
+      <div class="book book-4"><div class="book-title">Sci-Fi</div></div>
+      <div class="book book-5"><div class="book-title">Mystery</div></div>
+      <div class="book book-6"><div class="book-title">Romance</div></div>
+      <div class="book book-7"><div class="book-title">History</div></div>
+      <div class="book book-8"><div class="book-title">Business</div></div>
+    </div>
+  </div>
+
+  <div class="register-right">
+    <div class="floating-books">
+      <div class="floating-book fb-1"></div>
+      <div class="floating-book fb-2"></div>
+      <div class="floating-book fb-3"></div>
+      <div class="floating-book fb-4"></div>
+    </div>
+    
+    <div class="register-form-container">
+      <div class="tagline">
+        <i class="fas fa-robot"></i> Start Your AI-Powered Reading Journey
+      </div>
+      <h2 class="form-title">Create Account</h2>
+      
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <!-- Full Name -->
+        <div class="form-group">
+          <label for="fullName">Full Name</label>
+          <div class="input-with-icon">
+            <i class="fas fa-user"></i>
+            <input 
+              type="text" 
+              id="fullName" 
+              formControlName="name"
+              placeholder="Enter your full name"
+              [class.is-invalid]="f['name'].invalid && (f['name'].dirty || f['name'].touched)"
+            >
+          </div>
+          <div class="error-message" *ngIf="f['name'].invalid && (f['name'].dirty || f['name'].touched)">
+            <span *ngIf="f['name'].errors?.['required']">Full name is required</span>
+            <span *ngIf="f['name'].errors?.['minlength']">Name must be at least 3 characters</span>
+          </div>
+        </div>
+        
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-with-icon">
+            <i class="fas fa-envelope"></i>
+            <input 
+              type="email" 
+              id="email" 
+              formControlName="email"
+              placeholder="reader@example.com"
+              [class.is-invalid]="f['email'].invalid && (f['email'].dirty || f['email'].touched)"
+            >
+          </div>
+          <div class="error-message" *ngIf="f['email'].invalid && (f['email'].dirty || f['email'].touched)">
+            <span *ngIf="f['email'].errors?.['required']">Email is required</span>
+            <span *ngIf="f['email'].errors?.['email']">Please enter a valid email address</span>
+          </div>
+        </div>
+        
+        <!-- Password -->
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-with-icon">
+            <i class="fas fa-lock"></i>
+            <input 
+              type="password" 
+              id="password" 
+              formControlName="password"
+              placeholder="Create a password (min. 6 characters)"
+              [class.is-invalid]="f['password'].invalid && (f['password'].dirty || f['password'].touched)"
+              (input)="onPasswordInput()"
+            >
+          </div>
+          <div class="password-strength">
+            <div class="strength-meter" [ngClass]="passwordStrengthClass"></div>
+          </div>
+          <div class="strength-text">{{ passwordStrengthText }}</div>
+          <div class="error-message" *ngIf="f['password'].invalid && (f['password'].dirty || f['password'].touched)">
+            <span *ngIf="f['password'].errors?.['required']">Password is required</span>
+            <span *ngIf="f['password'].errors?.['minlength']">Password must be at least 6 characters</span>
+          </div>
+        </div>
+        
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <div class="input-with-icon">
+            <i class="fas fa-lock"></i>
+            <input 
+              type="password" 
+              id="confirmPassword" 
+              formControlName="confirmPassword"
+              placeholder="Confirm your password"
+              [class.is-invalid]="registerForm.errors?.['mismatch'] && (f['confirmPassword'].dirty || f['confirmPassword'].touched)"
+            >
+          </div>
+          <div class="error-message" *ngIf="registerForm.errors?.['mismatch'] && (f['confirmPassword'].dirty || f['confirmPassword'].touched)">
+            Passwords do not match
+          </div>
+        </div>
+        
+        <!-- Terms Checkbox -->
+        <div class="terms-checkbox">
+          <input type="checkbox" id="terms" formControlName="terms">
+          <label for="terms">
+            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+            I consent to receive personalized book recommendations via email.
+          </label>
+        </div>
+
+        <!-- Global Error -->
+        <div class="error-message global-error" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+        
+        <button type="submit" class="register-btn" [disabled]="registerForm.invalid || isLoading">
+          <i class="fas" [ngClass]="isLoading ? 'fa-spinner fa-spin' : 'fa-user-plus'"></i>
+          {{ isLoading ? 'Creating Account...' : 'Start Reading Journey' }}
+        </button>
+      </form>
+      
+      <div class="form-footer">
+        Already have an account? <a routerLink="/login">Sign In</a>
+      </div>
+    </div>
+  </div>
+</div>

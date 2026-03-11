@@ -1,0 +1,306 @@
+.admin-dashboard {
+  display: flex;
+  min-height: 100vh;
+  background-color: #F8FAFC;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  margin-left: 280px;
+  transition: all 0.3s ease;
+  width: calc(100% - 280px);
+}
+
+/* Top Navbar */
+.top-navbar {
+  background: white;
+  padding: 15px 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1E3A8A, #14B8A6);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+  padding: 20px;
+}
+
+/* Orders Header */
+.orders-header {
+  background: linear-gradient(135deg, #1E3A8A 0%, #0F2A6B 100%);
+  color: white;
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 20px;
+}
+
+.orders-header h2 {
+  margin-bottom: 10px;
+}
+
+/* Stats Row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: white;
+}
+
+.stat-icon.bg-primary { background: #1E3A8A; }
+.stat-icon.bg-warning { background: #F59E0B; }
+.stat-icon.bg-info { background: #3B82F6; }
+.stat-icon.bg-success { background: #10B981; }
+.stat-icon.bg-danger { background: #EF4444; }
+.stat-icon.bg-purple { background: #8B5CF6; }
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1F2937;
+  line-height: 1.2;
+}
+
+.stat-label {
+  color: #6B7280;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Filter Card */
+.filter-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.status-filter {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.status-btn {
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background: #F1F5F9;
+  color: #64748B;
+  font-weight: 500;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.status-btn:hover {
+  transform: translateY(-2px);
+}
+
+.status-btn.all.active { background: #94A3B8; color: white; }
+.status-btn.pending.active { background: #F59E0B; color: white; }
+.status-btn.processing.active { background: #3B82F6; color: white; }
+.status-btn.shipped.active { background: #8B5CF6; color: white; }
+.status-btn.delivered.active { background: #10B981; color: white; }
+.status-btn.cancelled.active { background: #EF4444; color: white; }
+
+/* Orders Table */
+.orders-table-container {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+.table thead th {
+  background: #F8FAFC;
+  color: #1F2937;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 15px 12px;
+  border-bottom: 2px solid #14B8A6;
+}
+
+.table tbody tr {
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.table tbody tr:hover {
+  background-color: #F8FAFC;
+}
+
+.table td {
+  padding: 15px 12px;
+  vertical-align: middle;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-pending { background: #FEF3C7; color: #D97706; }
+.status-processing { background: #DBEAFE; color: #1D4ED8; }
+.status-shipped { background: #F0FDF4; color: #16A34A; }
+.status-delivered { background: #DCFCE7; color: #166534; }
+.status-cancelled { background: #FEE2E2; color: #DC2626; }
+
+.payment-pending { background: #FEF3C7; color: #D97706; }
+.payment-paid { background: #DCFCE7; color: #166534; }
+.payment-failed { background: #FEE2E2; color: #DC2626; }
+.payment-refunded { background: #E0F2FE; color: #0284C7; }
+
+/* Action Buttons */
+.order-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.8rem;
+  transition: all 0.3s;
+  cursor: pointer;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-view { background: #6B7280; }
+.btn-view:hover { background: #4B5563; }
+
+.btn-edit { background: #F59E0B; }
+.btn-edit:hover { background: #D97706; }
+
+.btn-confirm { background: #10B981; }
+.btn-confirm:hover { background: #0D9C6D; }
+
+.btn-cancel { background: #EF4444; }
+.btn-cancel:hover { background: #DC2626; }
+
+.btn-ship { background: #3B82F6; }
+.btn-ship:hover { background: #2563EB; }
+
+.btn-deliver { background: #8B5CF6; }
+.btn-deliver:hover { background: #7C3AED; }
+
+/* Table Footer */
+.table-footer {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #E5E7EB;
+}
+
+/* Alerts */
+.alert {
+  border-radius: 12px;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  border: none;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+/* Modal Styles */
+.modal-content {
+  border-radius: 15px;
+  border: none;
+}
+
+.modal-header {
+  border-radius: 15px 15px 0 0;
+  border-bottom: none;
+}
+
+.modal-header.bg-primary { background: linear-gradient(135deg, #1E3A8A, #0F2A6B) !important; }
+.modal-header.bg-warning { background: linear-gradient(135deg, #F59E0B, #D97706) !important; }
+
+/* Responsive */
+@media (max-width: 992px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .stats-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .status-filter {
+    justify-content: center;
+  }
+  
+  .order-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 576px) {
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .table td {
+    white-space: nowrap;
+  }
+}
+
+.bg-purple {
+  background: #8B5CF6;
+}

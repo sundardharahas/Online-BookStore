@@ -1,0 +1,54 @@
+<div class="book-card" 
+     [style.animation-delay]="index * 0.1 + 's'">
+  
+  <!-- Book Cover -->
+  <div class="book-cover-container">
+    <ng-container *ngIf="book?.coverImage; else defaultCover">
+      <img [src]="book.coverImage" class="book-cover" [alt]="book.title">
+    </ng-container>
+    <ng-template #defaultCover>
+      <div class="book-cover default-cover">
+        <i class="fas fa-book"></i>
+      </div>
+    </ng-template>
+    
+    <div class="book-badges">
+      <span class="category-badge">{{ book?.category || 'Uncategorized' }}</span>
+    </div>
+    <span class="stock-badge" [ngClass]="getStockStatus().class">
+      {{ getStockStatus().text }}
+    </span>
+  </div>
+  
+  <!-- Book Details -->
+  <div class="book-content">
+    <h5 class="book-title">{{ book?.title || 'Unknown Title' }}</h5>
+    <p class="book-author">By {{ book?.author || 'Unknown Author' }}</p>
+    <p class="book-description">
+      {{ truncateDescription(book?.description) }}
+    </p>
+    
+    <div class="book-footer">
+      <div class="price-tag">${{ book?.price | number:'1.2-2' }}</div>
+      <div class="rating">
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star"></i>
+        <i class="fas fa-star"></i>
+        <i class="far fa-star"></i>
+      </div>
+    </div>
+    
+    <div class="book-actions">
+      <button class="action-btn detail-btn" (click)="viewDetails()">
+        <i class="fas fa-info-circle"></i>Details
+      </button>
+      <button class="action-btn cart-btn" 
+              (click)="addToCart()"
+              [disabled]="book?.stock === 0 || addingToCart">
+        <i class="fas" [ngClass]="addingToCart ? 'fa-spinner fa-spin' : 'fa-cart-plus'"></i>
+        {{ addingToCart ? 'Adding...' : (book?.stock === 0 ? 'Out of Stock' : 'Add') }}
+      </button>
+    </div>
+  </div>
+</div>

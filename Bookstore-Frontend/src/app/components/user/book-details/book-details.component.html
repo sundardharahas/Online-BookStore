@@ -1,0 +1,182 @@
+<app-user-navbar></app-user-navbar>
+
+<!-- Notification -->
+<div class="notification" *ngIf="notification.show" [ngClass]="notification.type">
+  <i class="fas" [ngClass]="notification.type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'"></i>
+  {{ notification.message }}
+</div>
+
+<!-- Loading -->
+<div class="loading-container" *ngIf="isLoading">
+  <div class="spinner-border text-primary" role="status"></div>
+  <p class="mt-3">Loading book details...</p>
+</div>
+
+<div class="book-details-page" *ngIf="!isLoading && book">
+  <!-- Back Button -->
+  <div class="container mt-4">
+    <button class="back-btn" (click)="goBack()">
+      <i class="fas fa-arrow-left me-2"></i>Back to Browse
+    </button>
+  </div>
+
+  <!-- Book Info Section -->
+  <div class="container mt-4">
+    <div class="book-info-card">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <div class="book-cover-section">
+            <img *ngIf="book.coverImage" [src]="book.coverImage" class="book-cover-img" [alt]="book.title">
+            <div *ngIf="!book.coverImage" class="book-cover-placeholder">
+              <i class="fas fa-book fa-4x"></i>
+            </div>
+            <span class="stock-badge" [ngClass]="getStockStatus().class">
+              {{ getStockStatus().text }}
+            </span>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="book-details">
+            <div class="category-tag">{{ book.category }}</div>
+            <h1 class="book-title">{{ book.title }}</h1>
+            <p class="book-author">by <strong>{{ book.author }}</strong></p>
+
+            <!-- Rating Summary -->
+            <div class="rating-summary" *ngIf="reviewStats">
+              <div class="stars">
+                <i *ngFor="let s of getStarArray(reviewStats.averageRating)" class="fas fa-star"
+                  [class.filled]="s === 1"></i>
+              </div>
+              <span class="rating-number">{{ reviewStats.averageRating }}</span>
+              <span class="rating-count">({{ reviewStats.totalReviews }} reviews)</span>
+            </div>
+
+            <div class="book-price">${{ book.price | number:'1.2-2' }}</div>
+
+            <div class="book-meta">
+              <div class="meta-item" *ngIf="book.isbn">
+                <span class="meta-label">ISBN</span>
+                <span class="meta-value">{{ book.isbn }}</span>
+              </div>
+              <div class="meta-item" *ngIf="book.publisher">
+                <span class="meta-label">Publisher</span>
+                <span class="meta-value">{{ book.publisher }}</span>
+              </div>
+              <div class="meta-item" *ngIf="book.publicationYear">
+                <span class="meta-label">Year</span>
+                <span class="meta-value">{{ book.publicationYear }}</span>
+              </div>
+              <div class="meta-item" *ngIf="book.language">
+                <span class="meta-label">Language</span>
+                <span class="meta-value">{{ book.language }}</span>
+              </div>
+            </div>
+
+            <div class="book-actions">
+              <button class="btn-cart" (click)="addToCart()" [disabled]="book.stock === 0 || isAddedToCart">
+                <i class="fas me-2" [ngClass]="isAddedToCart ? 'fa-check' : 'fa-cart-plus'"></i>
+                {{ book.stock === 0 ? 'Out of Stock' : (isAddedToCart ? 'Added to Cart' : 'Add to Cart') }}
+              </button>
+              <button class="btn-wishlist" [class.added]="book.inWishlist" (click)="addToWishlist()">
+                <i class="fas fa-heart me-2" [ngClass]="{'text-danger': book.inWishlist}"></i>
+                {{ book.inWishlist ? 'Saved to Wishlist' : 'Add to Wishlist' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs: Description & Reviews -->
+  <div class="container mt-4 mb-5">
+    <div class="tab-bar">
+      <button class="tab-btn" [class.active]="activeTab === 'description'" (click)="activeTab = 'description'">
+        <i class="fas fa-align-left me-2"></i>Description
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'reviews'" (click)="activeTab = 'reviews'">
+        <i class="fas fa-star me-2"></i>Reviews ({{ reviewStats?.totalReviews || 0 }})
+      </button>
+    </div>
+
+    <!-- Description Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'description'">
+      <div class="description-content">
+        <p>{{ book.description || 'No description available for this book.' }}</p>
+      </div>
+    </div>
+
+    <!-- Reviews Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'reviews'">
+      <!-- Rating Overview -->
+      <div class="rating-overview" *ngIf="reviewStats">
+        <div class="rating-overview-left">
+          <div class="big-rating">{{ reviewStats.averageRating }}</div>
+          <div class="big-stars">
+            <i *ngFor="let s of getStarArray(reviewStats.averageRating)" class="fas fa-star"
+              [class.filled]="s === 1"></i>
+          </div>
+          <p class="total-reviews-text">{{ reviewStats.totalReviews }} reviews</p>
+        </div>
+        <div class="rating-overview-right">
+          <div class="rating-bar" *ngFor="let star of [5,4,3,2,1]">
+            <span class="bar-label">{{ star }} <i class="fas fa-star"></i></span>
+            <div class="bar-track">
+              <div class="bar-fill" [style.width]="getRatingPercent(star) + '%'"></div>
+            </div>
+            <span class="bar-count">{{ reviewStats.ratingCounts[star] || 0 }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Write Review -->
+      <div class="write-review-card" *ngIf="currentUserId > 0">
+        <h5>{{ hasReviewed ? 'Update Your Review' : 'Write a Review' }}</h5>
+        <div class="star-selector">
+          <span class="star-label">Your Rating:</span>
+          <div class="star-input">
+            <i *ngFor="let star of [1,2,3,4,5]" class="fas fa-star star-pick"
+              [class.active]="star <= (hoverRating || userReview.rating)" (mouseenter)="hoverRating = star"
+              (mouseleave)="hoverRating = 0" (click)="setRating(star)"></i>
+          </div>
+        </div>
+        <textarea class="review-textarea" [(ngModel)]="userReview.comment"
+          placeholder="Share your thoughts about this book..." rows="4"></textarea>
+        <div class="review-actions">
+          <button class="btn-submit-review" (click)="submitReview()" [disabled]="isSubmitting">
+            <i class="fas fa-paper-plane me-2"></i>
+            {{ isSubmitting ? 'Submitting...' : (hasReviewed ? 'Update Review' : 'Submit Review') }}
+          </button>
+          <button class="btn-delete-review" *ngIf="hasReviewed && userReview.id" (click)="deleteReview(userReview.id!)">
+            <i class="fas fa-trash me-2"></i>Delete
+          </button>
+        </div>
+      </div>
+
+      <!-- Reviews List -->
+      <div class="reviews-list">
+        <div class="no-reviews" *ngIf="reviews.length === 0">
+          <i class="fas fa-comments fa-3x mb-3"></i>
+          <h5>No reviews yet</h5>
+          <p>Be the first to review this book!</p>
+        </div>
+
+        <div class="review-item" *ngFor="let review of reviews">
+          <div class="review-header">
+            <div class="reviewer-avatar">
+              {{ review.userName ? review.userName.charAt(0).toUpperCase() : 'U' }}
+            </div>
+            <div class="reviewer-info">
+              <h6 class="reviewer-name">{{ review.userName || 'Anonymous' }}</h6>
+              <span class="review-date">{{ getTimeAgo(review.createdAt) }}</span>
+            </div>
+            <div class="review-stars">
+              <i *ngFor="let s of getStarArray(review.rating)" class="fas fa-star" [class.filled]="s === 1"></i>
+            </div>
+          </div>
+          <p class="review-comment">{{ review.comment }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

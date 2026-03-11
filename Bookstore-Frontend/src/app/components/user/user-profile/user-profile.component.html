@@ -1,0 +1,128 @@
+<app-user-navbar></app-user-navbar>
+
+<!-- Header Section -->
+<div class="profile-header text-center">
+  <div class="container pb-3">
+    <div class="avatar-circle mx-auto mb-3 shadow">
+      {{ userInitial }}
+    </div>
+    <h2 class="text-white fw-bold mb-1">{{ currentUser?.fullname || 'Guest Reader' }}</h2>
+    <p class="text-light mb-0"><i class="fas fa-envelope me-2"></i>{{ currentUser?.email || 'No email provided' }}</p>
+  </div>
+</div>
+
+<div class="container py-5" style="margin-top: -60px;">
+  <!-- Loading State -->
+  <div class="text-center py-5" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div class="row g-4 justify-content-center" *ngIf="!isLoading">
+    <!-- Account Details Card -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm border-0 rounded-4 h-100">
+        <div class="card-header bg-white border-bottom py-3 px-4">
+          <h5 class="mb-0"><i class="fas fa-user-circle me-2 text-primary"></i>Account Details</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="mb-4">
+            <span class="text-muted d-block small fw-bold text-uppercase mb-1">Full Name</span>
+            <p class="mb-0 fs-5">{{ currentUser?.fullname || 'Not Provided' }}</p>
+          </div>
+          <div class="mb-4">
+            <span class="text-muted d-block small fw-bold text-uppercase mb-1">Email Address</span>
+            <p class="mb-0 fs-5">{{ currentUser?.email || 'Not Provided' }}</p>
+          </div>
+          <div class="mb-4">
+            <span class="text-muted d-block small fw-bold text-uppercase mb-1">Account Role</span>
+            <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">
+              <i class="fas fa-user-shield me-1"></i> {{ currentUser?.role || 'User' | titlecase }}
+            </span>
+          </div>
+
+          <div class="d-grid mt-4">
+            <button class="btn btn-outline-danger py-2 rounded-pill" (click)="logout()">
+              <i class="fas fa-sign-out-alt me-2"></i>Logout Securely
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bookstore Activity Dashboard -->
+    <div class="col-lg-8">
+      <div class="row g-4">
+        <!-- Stats Widgets -->
+        <div class="col-md-4">
+          <div class="card stat-card shadow-sm border-0 rounded-4 text-center h-100 py-4 color-orders">
+            <div class="card-body">
+              <i class="fas fa-shopping-bag fa-3x mb-3 text-white opacity-75"></i>
+              <h2 class="fw-bold text-white mb-1">{{ userStats.totalOrders }}</h2>
+              <p class="text-white mb-0 fw-medium">Total Orders</p>
+            </div>
+            <a routerLink="/orders" class="stretched-link"></a>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card stat-card shadow-sm border-0 rounded-4 text-center h-100 py-4 color-wishlist">
+            <div class="card-body">
+              <i class="fas fa-heart fa-3x mb-3 text-white opacity-75"></i>
+              <h2 class="fw-bold text-white mb-1">{{ userStats.wishlistCount }}</h2>
+              <p class="text-white mb-0 fw-medium">Saved Favourites</p>
+            </div>
+            <a routerLink="/wishlist" class="stretched-link"></a>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card stat-card shadow-sm border-0 rounded-4 text-center h-100 py-4 color-cart">
+            <div class="card-body">
+              <i class="fas fa-shopping-cart fa-3x mb-3 text-white opacity-75"></i>
+              <h2 class="fw-bold text-white mb-1">{{ userStats.cartCount }}</h2>
+              <p class="text-white mb-0 fw-medium">Items in Cart</p>
+            </div>
+            <a routerLink="/cart" class="stretched-link"></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card shadow-sm border-0 rounded-4 mt-4">
+        <div class="card-header bg-white border-bottom py-3 px-4">
+          <h5 class="mb-0"><i class="fas fa-bolt me-2 text-warning"></i>Quick Actions</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <button class="btn btn-light w-100 text-start py-3 px-4 rounded-3 d-flex align-items-center shadow-sm action-btn" routerLink="/browse">
+                <div class="action-icon bg-primary text-white me-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                  <i class="fas fa-search"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0 fw-bold text-dark">Discover Books</h6>
+                  <small class="text-muted">Browse our full catalogue</small>
+                </div>
+              </button>
+            </div>
+            
+            <div class="col-sm-6">
+              <button class="btn btn-light w-100 text-start py-3 px-4 rounded-3 d-flex align-items-center shadow-sm action-btn" routerLink="/dashboard">
+                <div class="action-icon bg-success text-white me-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                  <i class="fas fa-home"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0 fw-bold text-dark">Go to Dashboard</h6>
+                  <small class="text-muted">Return to main page</small>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

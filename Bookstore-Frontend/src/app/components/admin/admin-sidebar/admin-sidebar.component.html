@@ -1,0 +1,66 @@
+<div class="admin-sidebar" [class.collapsed]="isCollapsed">
+  <div class="sidebar-header">
+    <div class="logo">
+      <i class="fas fa-book-open"></i>
+      <span>Book Admin</span>
+    </div>
+    <button class="toggle-btn" (click)="toggleSidebar()" title="Toggle Sidebar">
+      <i class="fas" [ngClass]="isCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+    </button>
+  </div>
+
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/orders" routerLinkActive="active">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Manage Orders</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/add-book" routerLinkActive="active">
+        <i class="fas fa-plus-circle"></i>
+        <span>Add New Book</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/books" routerLinkActive="active">
+        <i class="fas fa-eye"></i>
+        <span>View All Books</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/users" routerLinkActive="active">
+        <i class="fas fa-users"></i>
+        <span>Manage Users</span>
+      </a>
+    </li>
+    <li class="nav-item mt-4">
+      <a class="nav-link" routerLink="/admin/profile" routerLinkActive="active">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link text-danger" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </a>
+    </li>
+  </ul>
+
+  <div class="sidebar-footer">
+    <div class="card">
+      <div class="card-body text-center">
+        <i class="fas fa-user-shield fa-2x mb-2" style="color: #14B8A6;"></i>
+        <h6>Admin Access</h6>
+        <small>Book Management</small>
+      </div>
+    </div>
+  </div>
+</div>

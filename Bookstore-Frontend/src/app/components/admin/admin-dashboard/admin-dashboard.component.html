@@ -1,0 +1,294 @@
+<div class="admin-dashboard">
+  <!-- Sidebar -->
+  <div class="admin-sidebar" [class.collapsed]="sidebarCollapsed">
+    <div class="sidebar-header">
+      <div class="logo">
+        <i class="fas fa-book-open"></i>
+        <span *ngIf="!sidebarCollapsed">Book Admin</span>
+      </div>
+      <button class="toggle-btn" (click)="toggleSidebar()">
+        <i class="fas" [ngClass]="sidebarCollapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+      </button>
+    </div>
+
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link active" (click)="navigateTo('/admin/dashboard')">
+          <i class="fas fa-home"></i>
+          <span *ngIf="!sidebarCollapsed">Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" (click)="navigateTo('/admin/add-book')">
+          <i class="fas fa-plus-circle"></i>
+          <span *ngIf="!sidebarCollapsed">Add New Book</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" (click)="navigateTo('/admin/books')">
+          <i class="fas fa-eye"></i>
+          <span *ngIf="!sidebarCollapsed">View All Books</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" (click)="navigateTo('/admin/orders')">
+          <i class="fas fa-shopping-cart"></i>
+          <span *ngIf="!sidebarCollapsed">Manage Orders</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" (click)="navigateTo('/admin/users')">
+          <i class="fas fa-users"></i>
+          <span *ngIf="!sidebarCollapsed">Manage Users</span>
+        </a>
+      </li>
+      <li class="nav-item mt-4">
+        <a class="nav-link" (click)="navigateTo('/admin/profile')">
+          <i class="fas fa-user"></i>
+          <span *ngIf="!sidebarCollapsed">Profile</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-danger" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+          <span *ngIf="!sidebarCollapsed">Logout</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" [class.expanded]="sidebarCollapsed">
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+      <div class="container-fluid">
+        <div class="d-flex align-items-center">
+          <button class="btn d-lg-none me-3" id="sidebarToggle" (click)="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h4 class="mb-0">Dashboard</h4>
+        </div>
+        
+        <div class="d-flex align-items-center">
+          <div class="search-box me-3">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Quick search...">
+              <button class="btn btn-outline-secondary">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="dropdown" ngbDropdown>
+            <button class="btn d-flex align-items-center dropdown-toggle" id="userDropdown" ngbDropdownToggle>
+              <div class="user-avatar me-2">
+                {{ currentAdmin?.name?.charAt(0) || 'A' }}
+              </div>
+              <span>{{ currentAdmin?.name || 'Admin' }}</span>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="userDropdown" class="dropdown-menu dropdown-menu-end">
+              <a ngbDropdownItem (click)="navigateTo('/admin/profile')">
+                <i class="fas fa-user me-2"></i>Profile
+              </a>
+              <div class="dropdown-divider"></div>
+              <a ngbDropdownItem class="text-danger" (click)="logout()">
+                <i class="fas fa-sign-out-alt me-2"></i>Logout
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="dashboard-content">
+      <!-- Welcome Banner -->
+      <div class="welcome-card" *ngIf="!isLoading">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h2>{{ getGreeting() }}, {{ currentAdmin?.name || 'Admin' }}!</h2>
+            <p class="mb-0">Manage your book inventory with ease. Here's what's happening today.</p>
+          </div>
+          <div class="col-md-4 text-end">
+            <p class="mb-1">Last login: {{ formatDate(currentTime) }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+          <div class="stat-card">
+            <div class="stat-icon icon-books">
+              <i class="fas fa-book"></i>
+            </div>
+            <div class="stat-details">
+              <div class="stat-number">{{ stats.totalBooks }}</div>
+              <div class="stat-label">Total Books</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+          <div class="stat-card">
+            <div class="stat-icon icon-categories">
+              <i class="fas fa-tags"></i>
+            </div>
+            <div class="stat-details">
+              <div class="stat-number">{{ stats.totalCategories }}</div>
+              <div class="stat-label">Categories</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+          <div class="stat-card">
+            <div class="stat-icon icon-orders">
+              <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="stat-details">
+              <div class="stat-number">{{ stats.totalOrders }}</div>
+              <div class="stat-label">Total Orders</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+          <div class="stat-card">
+            <div class="stat-icon icon-pending">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-details">
+              <div class="stat-number">{{ stats.pendingOrders }}</div>
+              <div class="stat-label">Pending Orders</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Stats Row -->
+      <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+          <div class="stat-card small">
+            <div class="stat-icon icon-customers">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-details">
+              <div class="stat-number">{{ stats.totalCustomers }}</div>
+              <div class="stat-label">Total Customers</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+          <div class="stat-card small">
+            <div class="stat-icon icon-revenue">
+              <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-details">
+              <div class="stat-number">${{ stats.totalRevenue | number:'1.2-2' }}</div>
+              <div class="stat-label">Total Revenue</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+          <div class="stat-card small">
+            <div class="stat-icon icon-lowstock">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-details">
+              <div class="stat-number">{{ stats.lowStockBooks }}</div>
+              <div class="stat-label">Low Stock Items</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="row mb-5">
+        <div class="col-12 mb-4">
+          <h4 class="section-title">Quick Actions</h4>
+        </div>
+        
+        <div class="col-lg-4 mb-4">
+          <div class="action-card" (click)="navigateTo('/admin/add-book')">
+            <div class="action-icon add-icon">
+              <i class="fas fa-plus"></i>
+            </div>
+            <h5>Add New Book</h5>
+            <p>Add a new book to your inventory</p>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 mb-4">
+          <div class="action-card" (click)="navigateTo('/admin/books')">
+            <div class="action-icon view-icon">
+              <i class="fas fa-eye"></i>
+            </div>
+            <h5>View All Books</h5>
+            <p>Manage existing books in inventory</p>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 mb-4">
+          <div class="action-card" (click)="navigateTo('/admin/orders')">
+            <div class="action-icon orders-icon">
+              <i class="fas fa-shopping-cart"></i>
+            </div>
+            <h5>Manage Orders</h5>
+            <p>Process and track customer orders</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="recent-orders-section" *ngIf="recentOrders.length > 0">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h4 class="section-title">Recent Orders</h4>
+          <button class="btn-view-all" (click)="navigateTo('/admin/orders')">
+            View All <i class="fas fa-arrow-right ms-2"></i>
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Payment</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let order of recentOrders">
+                <td><strong>#{{ order.orderNumber }}</strong></td>
+                <td>{{ order.customerName }}</td>
+                <td><strong>${{ order.totalAmount | number:'1.2-2' }}</strong></td>
+                <td><span class="status-badge" [ngClass]="getStatusClass(order.status)">{{ order.status }}</span></td>
+                <td><span class="status-badge" [ngClass]="getPaymentClass(order.paymentStatus)">{{ order.paymentStatus }}</span></td>
+                <td>{{ order.createdAt | date:'MMM dd, yyyy' }}</td>
+                <td>
+                  <button class="action-btn btn-view" (click)="viewOrder(order.orderId)">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div class="text-center py-5" *ngIf="isLoading">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3">Loading dashboard data...</p>
+      </div>
+    </div>
+  </div>
+</div>

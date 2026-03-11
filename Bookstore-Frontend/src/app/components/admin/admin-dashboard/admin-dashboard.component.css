@@ -1,0 +1,448 @@
+.admin-dashboard {
+  display: flex;
+  min-height: 100vh;
+  background-color: #F8FAFC;
+}
+
+/* Sidebar Styles */
+.admin-sidebar {
+  width: 280px;
+  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  color: white;
+  transition: all 0.3s ease;
+  position: fixed;
+  height: 100vh;
+  z-index: 1000;
+  box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+}
+
+.admin-sidebar.collapsed {
+  width: 80px;
+}
+
+.sidebar-header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #14B8A6;
+}
+
+.logo i {
+  font-size: 1.5rem;
+}
+
+.toggle-btn {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.toggle-btn:hover {
+  background: #14B8A6;
+}
+
+.nav {
+  margin-top: 20px;
+}
+
+.nav-item {
+  margin-bottom: 5px;
+}
+
+.nav-link {
+  color: #CBD5E1;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+
+.nav-link.active {
+  background: linear-gradient(to right, #1E3A8A, #14B8A6);
+  color: white;
+  border-left: 4px solid #14B8A6;
+}
+
+.nav-link i {
+  width: 20px;
+  text-align: center;
+}
+
+.nav-link.text-danger:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  margin-left: 280px;
+  transition: all 0.3s ease;
+  width: calc(100% - 280px);
+}
+
+.main-content.expanded {
+  margin-left: 80px;
+  width: calc(100% - 80px);
+}
+
+/* Top Navbar */
+.top-navbar {
+  background: white;
+  padding: 15px 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.search-box {
+  width: 300px;
+}
+
+.search-box .form-control {
+  border: 2px solid #E5E7EB;
+  border-radius: 10px;
+}
+
+.search-box .form-control:focus {
+  border-color: #14B8A6;
+  box-shadow: none;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1E3A8A, #14B8A6);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+  padding: 30px;
+}
+
+/* Welcome Card */
+.welcome-card {
+  background: linear-gradient(135deg, #1E3A8A 0%, #0F2A6B 100%);
+  color: white;
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(30, 58, 138, 0.2);
+}
+
+/* Stat Cards */
+.stat-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: all 0.3s;
+  height: 100%;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(20, 184, 166, 0.15);
+}
+
+.stat-card.small {
+  padding: 20px;
+}
+
+.stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.stat-card.small .stat-icon {
+  width: 50px;
+  height: 50px;
+  font-size: 20px;
+}
+
+.icon-books { background: #F0F9FF; color: #0EA5E9; }
+.icon-categories { background: #F0FDF4; color: #22C55E; }
+.icon-orders { background: #FEF3C7; color: #F59E0B; }
+.icon-pending { background: #FEE2E2; color: #EF4444; }
+.icon-customers { background: #EFF6FF; color: #3B82F6; }
+.icon-revenue { background: #F0FDF4; color: #10B981; }
+.icon-lowstock { background: #FEF3C7; color: #F59E0B; }
+
+.stat-details {
+  flex: 1;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1F2937;
+  line-height: 1.2;
+}
+
+.stat-card.small .stat-number {
+  font-size: 1.5rem;
+}
+
+.stat-label {
+  color: #6B7280;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Section Title */
+.section-title {
+  color: #1F2937;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #14B8A6;
+  display: inline-block;
+}
+
+/* Action Cards */
+.action-card {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: all 0.3s;
+  cursor: pointer;
+  height: 100%;
+}
+
+.action-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(20, 184, 166, 0.2);
+  border: 2px solid #14B8A6;
+}
+
+.action-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 20px;
+  color: white;
+}
+
+.add-icon { background: linear-gradient(135deg, #22C55E, #16A34A); }
+.view-icon { background: linear-gradient(135deg, #3B82F6, #1D4ED8); }
+.orders-icon { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
+
+.action-card h5 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #1F2937;
+}
+
+.action-card p {
+  color: #6B7280;
+  font-size: 0.9rem;
+  margin-bottom: 0;
+}
+
+/* Recent Orders Section */
+.recent-orders-section {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.btn-view-all {
+  background: transparent;
+  border: 2px solid #14B8A6;
+  color: #14B8A6;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.btn-view-all:hover {
+  background: #14B8A6;
+  color: white;
+}
+
+/* Table Styles */
+.table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  border-bottom: 2px solid #14B8A6;
+  color: #1F2937;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.table tbody tr {
+  transition: all 0.3s;
+}
+
+.table tbody tr:hover {
+  background-color: #F8FAFC;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-pending { background: #FEF3C7; color: #D97706; }
+.status-processing { background: #DBEAFE; color: #1D4ED8; }
+.status-shipped { background: #E0F2FE; color: #0284C7; }
+.status-delivered { background: #DCFCE7; color: #166534; }
+.status-cancelled { background: #FEE2E2; color: #DC2626; }
+
+.payment-pending { background: #FEF3C7; color: #D97706; }
+.payment-paid { background: #DCFCE7; color: #166534; }
+.payment-failed { background: #FEE2E2; color: #DC2626; }
+.payment-refunded { background: #E0F2FE; color: #0284C7; }
+
+/* Action Buttons */
+.action-btn {
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: #6B7280;
+  color: white;
+}
+
+.action-btn.btn-view {
+  background: #6B7280;
+}
+
+.action-btn.btn-view:hover {
+  background: #4B5563;
+  transform: translateY(-2px);
+}
+
+/* Loading Spinner */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  color: #1E3A8A;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .admin-sidebar {
+    margin-left: -280px;
+  }
+  
+  .admin-sidebar.collapsed {
+    margin-left: 0;
+    width: 280px;
+  }
+  
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .main-content.expanded {
+    margin-left: 0;
+  }
+  
+  .search-box {
+    width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: 20px;
+  }
+  
+  .stat-card {
+    padding: 20px;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  
+  .action-card {
+    padding: 20px;
+  }
+  
+  .action-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 576px) {
+  .search-box {
+    display: none;
+  }
+  
+  .welcome-card {
+    padding: 20px;
+  }
+  
+  .welcome-card h2 {
+    font-size: 1.2rem;
+  }
+}

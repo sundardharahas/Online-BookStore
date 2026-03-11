@@ -1,0 +1,53 @@
+.profile-header {
+  background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+  padding: 3rem 0 6rem 0;
+  border-bottom-left-radius: 50% 10%;
+  border-bottom-right-radius: 50% 10%;
+}
+
+.avatar-circle {
+  width: 100px;
+  height: 100px;
+  background-color: white;
+  color: #182848;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: bold;
+  border: 4px solid rgba(255,255,255,0.2);
+  background-clip: padding-box;
+}
+
+.stat-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 1rem 3rem rgba(0,0,0,0.15) !important;
+}
+
+.color-orders {
+  background: linear-gradient(135deg, #36D1DC 0%, #5B86E5 100%);
+}
+
+.color-wishlist {
+  background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+}
+
+.color-cart {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.action-btn {
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.action-btn:hover {
+  border-color: #dee2e6;
+  background-color: #f8f9fa !important;
+  transform: translateX(5px);
+}

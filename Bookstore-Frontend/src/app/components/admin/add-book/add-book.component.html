@@ -1,0 +1,339 @@
+<div class="admin-dashboard">
+  <!-- Sidebar -->
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+      <div class="container-fluid">
+        <div class="d-flex align-items-center">
+          <button class="btn d-lg-none me-3" id="sidebarToggle" (click)="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h4 class="mb-0">Add New Book</h4>
+        </div>
+        
+        <div class="d-flex align-items-center">
+          <div class="dropdown">
+            <button class="btn d-flex align-items-center dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="user-avatar me-2">A</div>
+              <span>Admin</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" routerLink="/admin/profile"><i class="fas fa-user me-2"></i>Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" (click)="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h1 class="display-6 fw-bold mb-3">Add New Book to Library</h1>
+          <p class="mb-0">Fill in the book details below to add it to your inventory.</p>
+        </div>
+        <div class="col-md-4 text-end">
+          <i class="fas fa-book-medical fa-5x opacity-75"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div class="alert alert-success alert-dismissible fade show" *ngIf="successMessage" role="alert">
+      <i class="fas fa-check-circle me-2"></i>
+      {{ successMessage }}
+      <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+    </div>
+    
+    <div class="alert alert-danger alert-dismissible fade show" *ngIf="errorMessage" role="alert">
+      <i class="fas fa-exclamation-circle me-2"></i>
+      {{ errorMessage }}
+      <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
+
+    <!-- Book Form -->
+    <form [formGroup]="addBookForm" (ngSubmit)="onSubmit()" class="form-container">
+      <h3 class="section-title">Book Information</h3>
+      
+      <div class="row">
+        <!-- Book Title -->
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="title">Book Title <span class="text-danger">*</span></label>
+            <div class="input-with-icon">
+              <i class="fas fa-heading"></i>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="title" 
+                formControlName="title"
+                [class.is-invalid]="title?.invalid && title?.touched"
+                placeholder="Enter book title">
+            </div>
+            <div class="invalid-feedback" *ngIf="title?.invalid && title?.touched">
+              <span *ngIf="title?.errors?.['required']">Book title is required</span>
+              <span *ngIf="title?.errors?.['minlength']">Title must be at least 2 characters</span>
+            </div>
+            <small class="text-muted">e.g., The Great Gatsby, To Kill a Mockingbird</small>
+          </div>
+        </div>
+        
+        <!-- Author -->
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="author">Author Name <span class="text-danger">*</span></label>
+            <div class="input-with-icon">
+              <i class="fas fa-user-pen"></i>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="author" 
+                formControlName="author"
+                [class.is-invalid]="author?.invalid && author?.touched"
+                placeholder="Enter author name">
+            </div>
+            <div class="invalid-feedback" *ngIf="author?.invalid && author?.touched">
+              <span *ngIf="author?.errors?.['required']">Author name is required</span>
+              <span *ngIf="author?.errors?.['minlength']">Author name must be at least 2 characters</span>
+            </div>
+            <small class="text-muted">e.g., F. Scott Fitzgerald, Harper Lee</small>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <!-- ISBN -->
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="isbn">ISBN Number <span class="text-danger">*</span></label>
+            <div class="isbn-input-container">
+              <input 
+                type="text" 
+                class="form-control" 
+                id="isbn" 
+                formControlName="isbn"
+                [class.is-invalid]="isbn?.invalid && isbn?.touched"
+                placeholder="Enter 13-digit ISBN">
+              <i class="fas fa-barcode" (click)="generateISBN()" title="Generate ISBN"></i>
+            </div>
+            <div class="invalid-feedback" *ngIf="isbn?.invalid && isbn?.touched">
+              <span *ngIf="isbn?.errors?.['required']">ISBN is required</span>
+              <span *ngIf="isbn?.errors?.['pattern']">ISBN must be 13 digits</span>
+            </div>
+            <small class="text-muted">13-digit International Standard Book Number</small>
+          </div>
+        </div>
+        
+        <!-- Publication Year -->
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="year">Publication Year</label>
+            <div class="input-with-icon">
+              <i class="fas fa-calendar"></i>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="year" 
+                formControlName="year"
+                [class.is-invalid]="addBookForm.get('year')?.invalid && addBookForm.get('year')?.touched"
+                placeholder="YYYY" 
+                min="1000" 
+                [max]="currentYear">
+            </div>
+            <div class="invalid-feedback" *ngIf="addBookForm.get('year')?.invalid && addBookForm.get('year')?.touched">
+              <span>Please enter a valid year</span>
+            </div>
+            <small class="text-muted">e.g., 1925, 1960, {{ currentYear }}</small>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Description -->
+      <div class="form-group">
+        <label for="description">Book Description <span class="text-danger">*</span></label>
+        <div class="input-with-icon">
+          <i class="fas fa-align-left"></i>
+          <textarea 
+            class="form-control" 
+            id="description" 
+            formControlName="description"
+            [class.is-invalid]="description?.invalid && description?.touched"
+            placeholder="Enter detailed description of the book" 
+            rows="4"></textarea>
+        </div>
+        <div class="invalid-feedback" *ngIf="description?.invalid && description?.touched">
+          <span *ngIf="description?.errors?.['required']">Description is required</span>
+          <span *ngIf="description?.errors?.['minlength']">Description should be at least 20 characters</span>
+        </div>
+        <small class="text-muted">Provide a detailed summary of the book</small>
+      </div>
+      
+      <h3 class="section-title mt-5">Book Details</h3>
+      
+      <div class="row">
+        <!-- Category -->
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="category">Category <span class="text-danger">*</span></label>
+            <select 
+              class="form-select" 
+              id="category" 
+              formControlName="category"
+              [class.is-invalid]="category?.invalid && category?.touched">
+              <option value="" selected disabled>Select category</option>
+              <option *ngFor="let cat of categories" [value]="cat.name">
+                {{ cat.displayName }}
+              </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="category?.invalid && category?.touched">
+              <span>Please select a category</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Price -->
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="price">Price ($) <span class="text-danger">*</span></label>
+            <div class="price-input-container">
+              <span>$</span>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="price" 
+                formControlName="price"
+                [class.is-invalid]="price?.invalid && price?.touched"
+                placeholder="0.00" 
+                step="0.01" 
+                min="0">
+            </div>
+            <div class="invalid-feedback" *ngIf="price?.invalid && price?.touched">
+              <span *ngIf="price?.errors?.['required']">Price is required</span>
+              <span *ngIf="price?.errors?.['min']">Price must be greater than 0</span>
+            </div>
+            <small class="text-muted">Enter price in USD</small>
+          </div>
+        </div>
+        
+        <!-- Stock Quantity -->
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="stock">Stock Quantity <span class="text-danger">*</span></label>
+            <div class="stock-input-container">
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fas fa-box"></i>
+                </span>
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  id="stock" 
+                  formControlName="stock"
+                  [class.is-invalid]="stock?.invalid && stock?.touched"
+                  placeholder="0" 
+                  min="0">
+              </div>
+            </div>
+            <div class="invalid-feedback" *ngIf="stock?.invalid && stock?.touched">
+              <span *ngIf="stock?.errors?.['required']">Stock quantity is required</span>
+              <span *ngIf="stock?.errors?.['min']">Stock cannot be negative</span>
+            </div>
+            <small class="text-muted">Number of copies available</small>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <!-- Publisher -->
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="publisher">Publisher</label>
+            <div class="input-with-icon">
+              <i class="fas fa-building"></i>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="publisher" 
+                formControlName="publisher"
+                placeholder="Enter publisher name">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Language -->
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="language">Language</label>
+            <select class="form-select" id="language" formControlName="language">
+              <option *ngFor="let lang of languages" [value]="lang.name">
+                {{ lang.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Book Cover Image -->
+      <h3 class="section-title mt-5">Book Cover</h3>
+      <div class="form-group">
+        <label for="coverImage">Upload Book Cover Image</label>
+        <div 
+          class="file-upload-container" 
+          id="fileUploadContainer"
+          (click)="fileInput.click()"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)"
+          *ngIf="!imagePreview">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <h5>Drag & Drop or Click to Upload</h5>
+          <p class="text-muted">Supports JPG, PNG, GIF up to 5MB</p>
+          <input 
+            type="file" 
+            #fileInput
+            id="coverImage" 
+            accept="image/*"
+            (change)="onFileSelected($event)"
+            style="display: none;">
+        </div>
+        
+        <div class="file-preview" *ngIf="imagePreview">
+          <img [src]="imagePreview" alt="Book Cover Preview">
+          <p class="mt-2">
+            <span>{{ fileName }}</span> (<span>{{ fileSize }}</span>)
+          </p>
+          <button type="button" class="btn btn-sm btn-outline-danger mt-2" (click)="removeImage()">
+            <i class="fas fa-trash me-1"></i> Remove Image
+          </button>
+        </div>
+      </div>
+      
+      <!-- Form Buttons -->
+      <div class="row mt-5">
+        <div class="col-md-6 mb-3">
+          <button type="button" class="btn btn-secondary-custom w-100" routerLink="/admin/dashboard">
+            <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+          </button>
+        </div>
+        <div class="col-md-6 mb-3">
+          <button type="submit" class="btn btn-primary-custom w-100" [disabled]="isLoading">
+            <i class="fas" [ngClass]="isLoading ? 'fa-spinner fa-spin' : 'fa-plus-circle'"></i>
+            {{ isLoading ? 'Adding Book...' : 'Add Book to Library' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Sample Data Button (Remove in Production) -->
+      <div class="text-center mt-3">
+        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="fillSampleData()">
+          <i class="fas fa-flask me-2"></i> Fill Sample Data (Testing)
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,153 @@
+<div class="login-container">
+  <div class="login-left">
+    <div class="logo">
+      <i class="fas fa-book-open"></i> SmartBookstore
+    </div>
+
+    <h1>Welcome Back</h1>
+    <p>Sign in to continue your reading journey with AI-powered book recommendations, personalized catalogs, and chatbot support.</p>
+
+    <div class="features">
+      <div class="feature-item">
+        <div class="feature-icon">
+          <i class="fas fa-robot"></i>
+        </div>
+        <div class="feature-content">
+          <h4>AI Book Assistant</h4>
+          <p>Chat with our AI assistant to find perfect books based on your mood, interests, and reading history.</p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">
+          <i class="fas fa-books"></i>
+        </div>
+        <div class="feature-content">
+          <h4>Digital Catalog</h4>
+          <p>Access thousands of books with smart search, filters, and personalized reading lists.</p>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="feature-content">
+          <h4>Reading Analytics</h4>
+          <p>Track your reading habits, set goals, and get personalized reading insights.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chatbot Visualization -->
+    <div class="chatbot-visualization">
+      <div class="chatbot-message">
+        Hi! I'm your AI assistant. I can help you find the perfect book! 📚
+      </div>
+      <div class="chatbot-robot">
+        <i class="fas fa-robot"></i>
+      </div>
+    </div>
+
+    <div class="book-shelf">
+      <div class="book book-1">
+        <div class="book-title">AI</div>
+      </div>
+      <div class="book book-2">
+        <div class="book-title">Fiction</div>
+      </div>
+      <div class="book book-3">
+        <div class="book-title">Tech</div>
+      </div>
+      <div class="book book-4">
+        <div class="book-title">Sci-Fi</div>
+      </div>
+      <div class="book book-5">
+        <div class="book-title">Mystery</div>
+      </div>
+      <div class="book book-6">
+        <div class="book-title">Romance</div>
+      </div>
+      <div class="book book-7">
+        <div class="book-title">History</div>
+      </div>
+      <div class="book book-8">
+        <div class="book-title">Business</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="login-right">
+    <div class="floating-books">
+      <div class="floating-book fb-1"></div>
+      <div class="floating-book fb-2"></div>
+      <div class="floating-book fb-3"></div>
+      <div class="floating-book fb-4"></div>
+    </div>
+
+    <div class="login-form-container">
+      <div class="tagline">
+        <i class="fas fa-robot"></i> Your AI-Powered Bookstore & Assistant
+      </div>
+      <h2 class="form-title">Login</h2>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-with-icon">
+            <i class="fas fa-envelope"></i>
+            <input 
+              type="email" 
+              id="email" 
+              formControlName="email"
+              placeholder="reader@example.com"
+              [class.is-invalid]="email?.invalid && email?.touched"
+            >
+          </div>
+          <div class="error-message" *ngIf="email?.invalid && email?.touched">
+            <span *ngIf="email?.errors?.['required']">Email is required</span>
+            <span *ngIf="email?.errors?.['email']">Please enter a valid email address</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-with-icon">
+            <i class="fas fa-lock"></i>
+            <input 
+              type="password" 
+              id="password" 
+              formControlName="password"
+              placeholder="Enter your password"
+              [class.is-invalid]="password?.invalid && password?.touched"
+            >
+          </div>
+          <div class="error-message" *ngIf="password?.invalid && password?.touched">
+            <span *ngIf="password?.errors?.['required']">Password is required</span>
+            <span *ngIf="password?.errors?.['minlength']">Password must be at least 6 characters</span>
+          </div>
+          <a href="#" class="forgot-password">Forgot Password?</a>
+        </div>
+
+        <div class="error-message global-error" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <button type="submit" class="login-btn" [disabled]="isLoading">
+          <i class="fas" [ngClass]="isLoading ? 'fa-spinner fa-spin' : 'fa-sign-in-alt'"></i>
+          {{ isLoading ? 'Logging in...' : 'Access Your Book Collection' }}
+        </button>
+      </form>
+
+      <div class="demo-login">
+        <button class="demo-btn" (click)="demoLogin()" [disabled]="isLoading">
+          <i class="fas fa-book-reader"></i> Try Demo Reader Account
+        </button>
+      </div>
+
+      <div class="form-footer">
+        New to Smart Bookstore? <a routerLink="/register">Create Your Reading Account</a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,132 @@
+<app-user-navbar></app-user-navbar>
+
+<!-- Header Section -->
+<div class="header-section">
+  <div class="container header-content">
+    <h1 class="header-title">My Favourites</h1>
+    <p class="header-subtitle">Your personal reading list and book collection</p>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Loading Spinner -->
+  <div class="text-center py-5" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3">Loading your wishlist...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div class="alert alert-danger alert-dismissible fade show" *ngIf="errorMessage && !isLoading" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    {{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+  </div>
+
+  <!-- Success Message -->
+  <div class="alert alert-success alert-dismissible fade show" *ngIf="successMessage && !isLoading" role="alert">
+    <i class="fas fa-check-circle me-2"></i>
+    {{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+  </div>
+
+  <!-- Stats Section -->
+  <div class="stats-section" *ngIf="!isLoading">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="stat-item">
+          <i class="fas fa-heart stat-icon"></i>
+          <div class="stat-number">{{ wishlistStats.totalItems }}</div>
+          <div class="stat-label">Favourite Books</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-item">
+          <i class="fas fa-book-open stat-icon"></i>
+          <div class="stat-number">{{ wishlistStats.currentlyReading }}</div>
+          <div class="stat-label">Currently Reading</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-item">
+          <i class="fas fa-check-circle stat-icon"></i>
+          <div class="stat-number">{{ wishlistStats.completedReads }}</div>
+          <div class="stat-label">Completed Reads</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wishlist Items -->
+  <div class="mb-5" *ngIf="!isLoading">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="mb-0">Your Reading List</h2>
+      <button class="btn btn-primary-custom" (click)="browseBooks()">
+        <i class="fas fa-plus me-2"></i>Add More Books
+      </button>
+    </div>
+
+    <!-- Empty Wishlist -->
+    <div class="no-items-message" *ngIf="wishlistItems.length === 0">
+      <i class="fas fa-heart"></i>
+      <h3>Your wishlist is empty</h3>
+      <p class="text-muted mb-4">Start building your reading list by adding books you love!</p>
+      <button class="btn btn-primary-custom" (click)="browseBooks()">
+        <i class="fas fa-search me-2"></i>Browse Books
+      </button>
+    </div>
+
+    <!-- Wishlist Grid -->
+    <div class="row g-4" *ngIf="wishlistItems.length > 0">
+      <div class="col-xl-3 col-lg-4 col-md-6" *ngFor="let item of wishlistItems">
+        <div class="wishlist-card" [class.removing]="removingItemId === item.id">
+          <div class="wishlist-content">
+            <img *ngIf="item.book.coverImage" [src]="item.book.coverImage" class="book-cover">
+
+            <h5 class="wishlist-title">{{ item.book.title }}</h5>
+            <p class="wishlist-author">By {{ item.book.author }}</p>
+
+            <div class="mb-3" *ngIf="item.book.category">
+              <span class="badge bg-light text-dark">
+                <i class="fas fa-tag me-1"></i>{{ item.book.category }}
+              </span>
+            </div>
+
+            <div class="status-badge">
+              <i class="fas fa-bookmark me-2"></i>
+              Want to Read
+            </div>
+
+            <div class="wishlist-actions">
+              <button class="cart-btn" [disabled]="addedToCartSet.has(item.book.id)" (click)="addToCart(item)">
+                <i class="fas me-2" [ngClass]="addedToCartSet.has(item.book.id) ? 'fa-check' : 'fa-cart-plus'"></i>
+                {{ addedToCartSet.has(item.book.id) ? 'Added to Cart' : 'Add to Cart' }}
+              </button>
+              <button class="remove-btn" (click)="removeFromWishlist(item)" [disabled]="removingItemId === item.id">
+                <i class="fas" [ngClass]="removingItemId === item.id ? 'fa-spinner fa-spin' : 'fa-trash'"></i>
+                {{ removingItemId === item.id ? 'Removing...' : 'Remove' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="row mb-4">
+      <div class="col-md-12 text-center">
+        <h4 class="mb-3">Smart Bookstore</h4>
+        <p class="mb-0">Keep track of your favorite books and reading progress</p>
+      </div>
+    </div>
+    <hr class="bg-light mb-4">
+    <p class="text-center mb-0">
+      &copy; 2024 Smart Bookstore. All rights reserved.
+    </p>
+  </div>
+</footer>

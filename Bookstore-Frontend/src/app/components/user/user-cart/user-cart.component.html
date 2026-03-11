@@ -1,0 +1,205 @@
+<app-user-navbar></app-user-navbar>
+
+<!-- Header Section -->
+<div class="header-section">
+    <div class="container">
+        <h1 class="header-title">Shopping Cart</h1>
+        <p class="header-subtitle">Review your selected books and proceed to checkout</p>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="cart-container">
+    <!-- Loading Spinner -->
+    <div class="text-center py-5" *ngIf="isLoading">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3">Loading your cart...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div class="alert alert-danger alert-dismissible fade show" *ngIf="errorMessage && !isLoading" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        {{ errorMessage }}
+        <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
+
+    <!-- Empty Cart -->
+    <div class="empty-cart" *ngIf="!isLoading && cartItems.length === 0">
+        <i class="fas fa-shopping-cart"></i>
+        <h3>Your Cart is Empty</h3>
+        <p class="text-muted mb-4">Add some books to your cart to see them here</p>
+        <div class="d-flex justify-content-center gap-3">
+            <button class="action-btn checkout-btn" (click)="continueShopping()" style="max-width: 200px;">
+                <i class="fas fa-book me-2"></i> Browse Books
+            </button>
+            <button class="continue-btn" (click)="continueShopping()" style="max-width: 200px;">
+                <i class="fas fa-search me-2"></i> Search Books
+            </button>
+        </div>
+    </div>
+
+    <!-- Cart with Items -->
+    <div class="row" *ngIf="!isLoading && cartItems.length > 0">
+        <!-- Cart Items -->
+        <div class="col-lg-8 mb-4">
+            <div class="cart-items-card">
+                <!-- FIX 1: Use cartItems.length instead of cartSummary.itemCount -->
+                <h3 class="mb-4">Cart Items ({{ cartItems.length }})</h3>
+
+                <div *ngFor="let item of cartItems" class="cart-item" [class.removing]="removingItemId === item.cartId">
+                    <div class="row align-items-center">
+                        <!-- Book Cover - FIX 2: Direct image URL with fallback -->
+                        <div class="book-cover-container col-md-3 mb-3 mb-md-0">
+                            <img [src]="item.coverImage ? item.coverImage : 'assets/images/no-book.png'"
+                                (error)="item.coverImage='assets/images/no-book.png'" class="book-cover" [alt]="item.title">
+                        </div>
+
+                        <!-- Book Details -->
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <h4 class="book-title">{{ item.title }}</h4>
+                            <p class="book-author mb-2">By {{ item.author }}</p>
+                            <span class="stock-badge" [ngClass]="getStockStatus(item.stock).class">
+                                <i class="fas fa-{{ getStockStatus(item.stock).icon }} me-1"></i>
+                                {{ getStockStatus(item.stock).text }}
+                            </span>
+                            <div class="mt-3">
+                                <span class="price-unit">Price: </span>
+                                <span class="price-display" [attr.data-price]="item.price || 0">
+                                    ${{ formatPrice(item.price || 0) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Quantity Controls -->
+                        <div class="col-md-2 mb-3 mb-md-0">
+                            <div class="d-flex flex-column align-items-center">
+                                <div class="quantity-control mb-2">
+                                    <button class="quantity-btn" (click)="updateQuantity(item, -1)"
+                                        [disabled]="(item.quantity || 1) <= 1 || updatingItemId === item.cartId">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+
+                                    <input type="number" [value]="item.quantity || 1" min="1" [max]="item.stock || 0"
+                                        class="quantity-input" (change)="onQuantityChange(item, $event)"
+                                        (blur)="onQuantityChange(item, $event)"
+                                        [disabled]="updatingItemId === item.cartId">
+
+                                    <button class="quantity-btn" (click)="updateQuantity(item, 1)"
+                                        [disabled]="(item.quantity || 1) >= (item.stock || 0) || updatingItemId === item.cartId">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Stock indicator -->
+                                <div class="stock-info text-center">
+                                    <small class="text-muted">
+                                        {{ getStockMessage(item.stock) }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total and Actions -->
+                        <div class="col-md-3">
+                            <div class="text-center text-md-end">
+                                <div class="price-display mb-3">
+                                    ${{ formatPrice((item.price || 0) * (item.quantity || 1)) }}
+                                </div>
+                                <div
+                                    class="action-buttons d-flex flex-wrap gap-2 justify-content-center justify-content-md-end">
+                                    <button class="action-btn remove-btn" (click)="removeFromCart(item)"
+                                        [disabled]="removingItemId === item.cartId">
+                                        <i class="fas"
+                                            [ngClass]="removingItemId === item.cartId ? 'fa-spinner fa-spin' : 'fa-trash'"></i>
+                                        {{ removingItemId === item.cartId ? 'Removing...' : 'Remove' }}
+                                    </button>
+                                    <button class="action-btn wishlist-btn" (click)="addToWishlist(item)"
+                                        [disabled]="item.stock === 0">
+                                        <i class="fas fa-heart"></i> Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button class="continue-btn" (click)="continueShopping()" style="max-width: 250px;">
+                        <i class="fas fa-arrow-left me-2"></i> Continue Shopping
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-lg-4">
+            <div class="summary-card">
+                <div class="summary-header">
+                    <h4 class="mb-0">Order Summary</h4>
+                </div>
+
+                <div class="summary-row">
+                    <span class="summary-label">Subtotal ({{ cartItems.length }} items)</span>
+                    <span class="summary-value">${{ formatPrice(cartSummary.subtotal || 0) }}</span>
+                </div>
+
+                <div class="summary-row">
+                    <span class="summary-label">Shipping</span>
+                    <span class="summary-value" [class.text-success]="cartSummary.hasFreeShipping">
+                        <span *ngIf="cartSummary.hasFreeShipping">FREE</span>
+                        <span *ngIf="!cartSummary.hasFreeShipping">${{ formatPrice(cartSummary.shipping || 0) }}</span>
+                    </span>
+                </div>
+
+                <div class="summary-row text-success" *ngIf="cartSummary.hasFreeShipping">
+                    <span class="summary-label">Shipping Discount</span>
+                    <span class="summary-value">-${{ formatPrice(cartSummary.shippingDiscount || 0) }}</span>
+                </div>
+
+                <div class="summary-row">
+                    <span class="summary-label">Tax (10%)</span>
+                    <span class="summary-value">${{ formatPrice(cartSummary.tax || 0) }}</span>
+                </div>
+
+                <div class="summary-row total-row">
+                    <span class="total-label">Total Amount</span>
+                    <span class="total-value">${{ formatPrice(cartSummary.total || 0) }}</span>
+                </div>
+
+                <button class="checkout-btn" (click)="checkout()" [disabled]="cartItems.length === 0">
+                    <i class="fas fa-lock me-2"></i> Proceed to Checkout
+                </button>
+
+                <div class="mt-4">
+                    <p class="text-muted small mb-2">
+                        <i class="fas fa-shield-alt me-2"></i>Secure checkout with SSL encryption
+                    </p>
+                    <p class="text-muted small mb-2">
+                        <i class="fas fa-truck me-2"></i>Free shipping on orders over $50
+                    </p>
+                    <p class="text-muted small">
+                        <i class="fas fa-undo me-2"></i>30-day return policy
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-12 text-center">
+                <h4 class="mb-3">Smart Bookstore</h4>
+                <p class="mb-0">Your reading journey starts with a single book</p>
+            </div>
+        </div>
+        <hr class="bg-light mb-4">
+        <p class="text-center mb-0">
+            &copy; 2024 Smart Bookstore. All rights reserved.
+        </p>
+    </div>
+</footer>
