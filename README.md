@@ -47,5 +47,4 @@ This repository is divided into two main components:
    ```
 4. Open your browser and navigate to `http://localhost:4200/`.
 
-## License
-MIT License
+
