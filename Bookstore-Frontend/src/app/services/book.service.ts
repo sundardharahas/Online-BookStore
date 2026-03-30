@@ -25,6 +25,13 @@ export class BookService {
   }
 
   // =========================
+  // UPDATE
+  // =========================
+  updateBook(id: number, book: any): Observable<Book> {
+    return this.http.put<Book>(`${this.apiUrl}/${id}`, book);
+  }
+
+  // =========================
   // READ (ALL BOOKS)
   // =========================
   getAllBooks(): Observable<Book[]> {

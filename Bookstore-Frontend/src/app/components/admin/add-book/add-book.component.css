@@ -248,6 +248,13 @@ textarea.form-control {
   transition: all 0.3s;
 }
 
+.highlight-field {
+  background-color: #fff9db;
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px dashed #fcc419;
+}
+
 .btn-secondary-custom:hover {
   background: #0F2A6B;
   color: white;

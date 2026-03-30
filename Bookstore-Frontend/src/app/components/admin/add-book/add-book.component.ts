@@ -1,13 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { BookService } from '../../../services/book.service';
-
-interface Category {
-  id: string;
-  name: string;
-  displayName: string;
-}
+import { BrowseService } from '../../../services/browse.service';
 
 interface Language {
   code: string;
@@ -23,7 +18,7 @@ export class AddBookComponent implements OnInit {
 
   addBookForm: FormGroup;
 
-  categories: Category[] = [];
+  categories: string[] = [];
   languages: Language[] = [];
 
   selectedFile: File | null = null;
@@ -32,6 +27,8 @@ export class AddBookComponent implements OnInit {
   fileSize: string = '';
 
   isLoading = false;
+  isEditMode = false;
+  bookId: number | null = null;
   successMessage = '';
   errorMessage = '';
   currentYear: number = new Date().getFullYear();
@@ -39,7 +36,9 @@ export class AddBookComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private bookService: BookService
+    private route: ActivatedRoute,
+    private bookService: BookService,
+    private browseService: BrowseService
   ) {
 
     this.addBookForm = this.fb.group({
@@ -59,6 +58,44 @@ export class AddBookComponent implements OnInit {
   ngOnInit(): void {
     this.loadCategories();
     this.loadLanguages();
+    
+    // Check if we are in Edit Mode
+    this.route.params.subscribe(params => {
+      if (params['id']) {
+        this.isEditMode = true;
+        this.bookId = +params['id'];
+        this.loadBookDetails(this.bookId);
+      }
+    });
+  }
+
+  loadBookDetails(id: number): void {
+    this.isLoading = true;
+    this.bookService.getBookById(id).subscribe({
+      next: (book) => {
+        this.addBookForm.patchValue({
+          title: book.title,
+          author: book.author,
+          isbn: book.isbn,
+          year: book.publicationYear,
+          description: book.description,
+          category: book.category,
+          price: book.price,
+          stock: book.stock,
+          publisher: book.publisher,
+          language: book.language
+        });
+        if (book.coverImage) {
+          this.imagePreview = book.coverImage;
+        }
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.errorMessage = "Failed to load book details.";
+        this.isLoading = false;
+      }
+    });
   }
 
   // ============================
@@ -92,24 +129,41 @@ export class AddBookComponent implements OnInit {
       coverImage: this.imagePreview || null
     };
 
-    this.bookService.addBook(bookData).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.successMessage = "Book added successfully!";
+    if (this.isEditMode && this.bookId) {
+      this.bookService.updateBook(this.bookId, bookData).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.successMessage = "Book updated successfully!";
+          setTimeout(() => {
+            this.router.navigate(['/admin/books']);
+          }, 1500);
+        },
+        error: (err) => {
+          this.isLoading = false;
+          console.error(err);
+          this.errorMessage = "Failed to update book.";
+        }
+      });
+    } else {
+      this.bookService.addBook(bookData).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.successMessage = "Book added successfully!";
 
-        this.addBookForm.reset();
-        this.removeImage();
+          this.addBookForm.reset();
+          this.removeImage();
 
-        setTimeout(() => {
-          this.router.navigate(['/admin/books']);
-        }, 1500);
-      },
-      error: (err) => {
-        this.isLoading = false;
-        console.error(err);
-        this.errorMessage = "Failed to add book. Please check backend.";
-      }
-    });
+          setTimeout(() => {
+            this.router.navigate(['/admin/books']);
+          }, 1500);
+        },
+        error: (err) => {
+          this.isLoading = false;
+          console.error(err);
+          this.errorMessage = "Failed to add book. Please check backend.";
+        }
+      });
+    }
   }
 
   // ======================
@@ -129,12 +183,14 @@ export class AddBookComponent implements OnInit {
   // CATEGORY & LANGUAGE
   // ======================
   loadCategories(): void {
-    this.categories = [
-      { id: 'fiction', name: 'Fiction', displayName: 'Fiction' },
-      { id: 'science', name: 'Science', displayName: 'Science' },
-      { id: 'technology', name: 'Technology', displayName: 'Technology' },
-      { id: 'business', name: 'Business', displayName: 'Business' }
-    ];
+    this.browseService.getCategories().subscribe({
+      next: (data) => {
+        this.categories = data;
+      },
+      error: (err) => {
+        console.error('Error loading categories', err);
+      }
+    });
   }
 
   loadLanguages(): void {
